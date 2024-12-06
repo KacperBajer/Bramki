@@ -50,6 +50,37 @@ ALTER TABLE public.controllers ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY 
 
 
 --
+-- Name: logs; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.logs (
+    id bigint NOT NULL,
+    action text,
+    status text,
+    comment text,
+    username text,
+    userid bigint,
+    date text
+);
+
+
+ALTER TABLE public.logs OWNER TO postgres;
+
+--
+-- Name: logs_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.logs ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.logs_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
 -- Name: sessions; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -112,6 +143,17 @@ COPY public.controllers (id, type, name, openlink, mode) FROM stdin;
 1	barrier	Wyjazd jasna	http://bramki.zs1mm.local/iaccess/SendDoorData/?func=opendoor&type=part&data=45&open_interval=15&enable_no_tzs=false&stamp=1733493540452&_=1733493540456	out
 2	gate	Bramka 4	http://bramki.zs1mm.local/iaccess/SendDoorData/?func=opendoor&type=part&data=30&open_interval=15&enable_no_tzs=false&stamp=1733515114695&_=1733515114699	out
 3	gate	Bramka 4	http://bramki.zs1mm.local/iaccess/SendDoorData/?func=opendoor&type=part&data=29&open_interval=15&enable_no_tzs=false&stamp=1733517069195&_=1733517069199	in
+4	gate	Bramka 1	http://bramki.zs1mm.local/iaccess/SendDoorData/?func=opendoor&type=part&data=28&open_interval=15&enable_no_tzs=false&stamp=1733523444764&_=1733523444770	out
+\.
+
+
+--
+-- Data for Name: logs; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.logs (id, action, status, comment, username, userid, date) FROM stdin;
+1	Open door Bramka 1 (4)	failed	Something wants wrong	kb	1	\N
+2	Open door Bramka 1 (4)	failed	Something wants wrong	kb	1	2024-12-06T22:59:16.453Z
 \.
 
 
@@ -137,7 +179,14 @@ COPY public.users (id, username, password, role) FROM stdin;
 -- Name: controlers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.controlers_id_seq', 3, true);
+SELECT pg_catalog.setval('public.controlers_id_seq', 4, true);
+
+
+--
+-- Name: logs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.logs_id_seq', 2, true);
 
 
 --
@@ -160,6 +209,14 @@ SELECT pg_catalog.setval('public.users_id_seq', 1, true);
 
 ALTER TABLE ONLY public.controllers
     ADD CONSTRAINT controlers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: logs logs_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.logs
+    ADD CONSTRAINT logs_pkey PRIMARY KEY (id);
 
 
 --
