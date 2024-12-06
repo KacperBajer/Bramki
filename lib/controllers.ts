@@ -1,0 +1,118 @@
+'use server'
+
+import { Pool } from "pg";
+import conn from "./db";
+import { Controller } from "./types";
+
+type getControllersData = {
+    in: Controller[]
+    out: Controller[]
+}
+
+type GetControllersResponse = {
+    status: 'success' | 'failed'
+    data?: getControllersData
+    error?: string
+}
+
+export const getControllers = async () => {
+    try {
+        const query = 'SELECT id, type, name, mode FROM controllers'
+        const result = await (conn as Pool).query(
+            query, []
+        );
+        const controllers = result.rows;
+
+        const grouped = controllers.reduce((acc, controller) => {
+            if (controller.mode === 'in') {
+                acc.in.push(controller);
+            } else if (controller.mode === 'out') {
+                acc.out.push(controller);
+            }
+            return acc;
+        }, { in: [], out: [] });
+
+        const ans: GetControllersResponse = {
+            status: 'success',
+            data: grouped
+        }
+
+        return ans;
+    } catch (error) {
+        const ans: GetControllersResponse = {
+            status: 'failed',
+            error: 'Something wants wrong'
+        }
+        console.log(error)
+        return ans
+    }
+} 
+
+type GetOpenLinkResponse = {
+    status: 'success' | 'failed'
+    data?: string
+    error?: string
+}
+
+export const getOpenLink = async (id: number) => {
+    try {
+        const query = 'SELECT * FROM controllers WHERE id = $1'
+        const result = await (conn as Pool).query(
+            query, [id]
+        );
+        if(result.rows.length < 1) {
+            const ans: GetOpenLinkResponse = {
+                status: 'failed',
+                error: 'No data'
+            }
+            return ans
+        }
+        const ans: GetOpenLinkResponse = {
+            status: 'success',
+            data: result.rows[0].openlink
+        }
+        return ans
+    } catch (error) {
+        const ans: GetOpenLinkResponse = {
+            status: 'failed',
+            error: 'Something wants wrong'
+        }
+        console.log(error)
+        return ans
+    }
+}
+
+type OpenControllerResponse = {
+    status: 'success' | 'failed'
+    data?: string
+    error?: string
+}
+
+export const openController = async (id: number) => {
+    try {
+
+        const link = await getOpenLink(id)
+
+        if(link.status === 'failed') {
+            const ans: GetOpenLinkResponse = {
+                status: 'failed',
+                error: 'Something wants wrong'
+            }
+            return ans
+        }
+
+        const response = await fetch((link.data as string));
+        console.log(response)
+        const ans: GetOpenLinkResponse = {
+            status: 'success',
+        }
+        return ans
+    } catch (error) {
+        const ans: GetOpenLinkResponse = {
+            status: 'failed',
+            error: 'Something wants wrong'
+        }
+        return ans
+        console.log(error)
+    }
+}
