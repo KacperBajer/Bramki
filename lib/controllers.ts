@@ -2,7 +2,10 @@
 
 import { Pool } from "pg";
 import conn from "./db";
-import { Controller } from "./types";
+import { Controller, User } from "./types";
+import { getUserId } from "./sessions";
+import { getUser } from "./users";
+import { createLogs } from "./logs";
 
 type getControllersData = {
     in: Controller[]
@@ -46,7 +49,7 @@ export const getControllers = async () => {
         console.log(error)
         return ans
     }
-} 
+}
 
 type GetOpenLinkResponse = {
     status: 'success' | 'failed'
@@ -60,7 +63,7 @@ export const getOpenLink = async (id: number) => {
         const result = await (conn as Pool).query(
             query, [id]
         );
-        if(result.rows.length < 1) {
+        if (result.rows.length < 1) {
             const ans: GetOpenLinkResponse = {
                 status: 'failed',
                 error: 'No data'
@@ -88,31 +91,43 @@ type OpenControllerResponse = {
     error?: string
 }
 
-export const openController = async (id: number) => {
+
+export const openController = async (id: number, name: string) => {
     try {
 
         const link = await getOpenLink(id)
 
-        if(link.status === 'failed') {
-            const ans: GetOpenLinkResponse = {
+        if (link.status === 'failed') {
+            const ans: OpenControllerResponse = {
                 status: 'failed',
                 error: 'Something wants wrong'
             }
+
+            const createLog = await createLogs(`Open door ${name} (${id})`, 'failed', 'Something wants wrong')
+
             return ans
         }
 
-        const response = await fetch((link.data as string));
-        console.log(response)
-        const ans: GetOpenLinkResponse = {
+        const response = await fetch(link.data as string, {
+            method: 'GET',
+            headers: {
+                'Cookie': `sessionidadms=31e10af6f798790c3db63e76493b8dc8`,
+            },
+            credentials: 'include',
+        })
+
+        const ans: OpenControllerResponse = {
             status: 'success',
         }
+        const createLog = createLogs(`Open door ${name} (${id})`, 'success', '')
         return ans
     } catch (error) {
-        const ans: GetOpenLinkResponse = {
+        const ans: OpenControllerResponse = {
             status: 'failed',
             error: 'Something wants wrong'
         }
-        return ans
         console.log(error)
+        const createLog = await createLogs(`Open door ${name} (${id})`, 'failed', 'Something wants wrong')
+        return ans
     }
 }

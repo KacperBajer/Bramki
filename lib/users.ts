@@ -3,6 +3,7 @@ import { Pool } from "pg";
 import conn from "./db";
 import { createSession, getUserId } from "./sessions";
 import { User } from "./types";
+import { createLogs } from "./logs";
 
 
 export const getUser = async () => {
@@ -67,6 +68,7 @@ export const loginUser = async (username: string, password: string) => {
             status: 'success',
             token: session
         }
+        const createLog = await createLogs(`Log In`, 'success', '')
         return ans
     } catch (error) {
         console.log(error)

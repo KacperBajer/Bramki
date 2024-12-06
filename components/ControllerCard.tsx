@@ -8,7 +8,7 @@ import { openController } from '@/lib/controllers'
 const ControllerCard = ({type, name, id, mode}: Controller) => {
 
     const open = async () => {
-        const res = await openController(id)
+        const res = await openController(id, name)
         console.log(res)
     }
 
