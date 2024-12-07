@@ -20,11 +20,53 @@ type GetControllersResponse = {
 
 export const getControllers = async () => {
     try {
-        const query = 'SELECT id, type, name, mode FROM controllers'
-        const result = await (conn as Pool).query(
-            query, []
-        );
-        const controllers = result.rows;
+        const user = await getUser();
+
+        if (!user) {
+            return {
+                status: 'failed',
+                error: 'User not found or unauthorized',
+            } as GetControllersResponse;
+        }
+
+        const isAdmin = user.role === 'admin';
+
+        let controllersQuery = 'SELECT id, type, name, mode FROM controllers';
+ 
+
+        const controllersResult = await (conn as Pool).query(controllersQuery);
+        const controllers = controllersResult.rows;
+
+        if (!isAdmin) {
+            const uhfCard = user.cards?.find(card => card.type === 'UHF');
+            const rfidCard = user.cards?.find(card => card.type === 'RFID');
+
+            console.log(user.cards)
+
+            const filteredControllers = controllers.filter(controller => {
+                if (uhfCard && controller.type === 'barrier') {
+                    return true;
+                }
+                if (rfidCard && controller.type === 'gate') {
+                    return true;
+                }
+                return false;
+            });
+
+            const grouped = filteredControllers.reduce((acc, controller) => {
+                if (controller.mode === 'in') {
+                    acc.in.push(controller);
+                } else if (controller.mode === 'out') {
+                    acc.out.push(controller);
+                }
+                return acc;
+            }, { in: [], out: [] });
+
+            return {
+                status: 'success',
+                data: grouped,
+            } as GetControllersResponse;
+        }
 
         const grouped = controllers.reduce((acc, controller) => {
             if (controller.mode === 'in') {
@@ -35,21 +77,18 @@ export const getControllers = async () => {
             return acc;
         }, { in: [], out: [] });
 
-        const ans: GetControllersResponse = {
+        return {
             status: 'success',
-            data: grouped
-        }
-
-        return ans;
+            data: grouped,
+        } as GetControllersResponse;
     } catch (error) {
-        const ans: GetControllersResponse = {
+        console.error(error);
+        return {
             status: 'failed',
-            error: 'Something wants wrong'
-        }
-        console.log(error)
-        return ans
+            error: 'Something went wrong',
+        } as GetControllersResponse;
     }
-}
+};
 
 type GetOpenLinkResponse = {
     status: 'success' | 'failed'

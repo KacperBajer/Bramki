@@ -1,9 +1,10 @@
 'use client'
 import { SideBarLinks } from '@/lib/constants'
+import { deleteSession } from '@/lib/sessions'
 import { User } from '@/lib/types'
 import Image from 'next/image'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { redirect, usePathname } from 'next/navigation'
 import React from 'react'
 
 type Props = {
@@ -14,8 +15,15 @@ const SideBar = ({user}: Props) => {
 
     const path = usePathname()
 
+    const handleLogout = async () => {
+        const res = await deleteSession()
+        if(res === 'success' ) {
+            redirect('/sign-in')
+        }
+    }
+
   return (
-    <div className='sticky top-0 left-0 rounded-md flex flex-col justify-between border-2 h-fit min-h-[calc(100vh-32px)] border-dark-100 py-6 px-4 w-[300px] mr-6'>
+    <div className='sticky top-0 left-0 rounded-md flex flex-col justify-between border-2 h-fit min-h-[calc(100vh-32px)] border-dark-100 py-6 px-4 min-w-[300px] max-w-[300px] mr-6'>
         <section className='flex flex-col'>
             <p className='text-3xl font-bold text-center'>Bramki</p>
             <div className='flex flex-col gap-1 mt-20'>
@@ -42,8 +50,8 @@ const SideBar = ({user}: Props) => {
                     height={40}
                 />
                 <div className='flex flex-col'>
-                    <p className='text-sm text-gray-100'>{user.username}</p>
-                <button className='text-xs text-gray-400 text-left'>Logout</button>
+                    <p className='text-sm text-gray-100'>{user.firstname} {user.lastname}</p>
+                <button onClick={handleLogout} className='text-xs text-gray-400 text-left'>Logout</button>
                 </div>
 
             </div>

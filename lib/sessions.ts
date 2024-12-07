@@ -71,3 +71,23 @@ export const getUserId = async () => {
         return ans
     }
 }
+
+export const deleteSession = async () => {
+    const cookieStore = await cookies()
+    try {
+
+        const token = cookieStore.get('token')
+
+        const query = 'DELETE FROM sessions WHERE token = $1'
+        const result = await (conn as Pool).query(
+            query, [token]
+        );
+
+        cookieStore.delete('token')
+
+        return 'success'
+    } catch (error) {
+        console.log(error)
+        return 'failed'
+    }
+}
