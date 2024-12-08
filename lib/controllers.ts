@@ -18,9 +18,9 @@ type GetControllersResponse = {
     error?: string
 }
 
-export const getControllers = async () => {
+export const getControllers = async (token?: string) => {
     try {
-        const user = await getUser();
+        const user = await getUser(token);
 
         if (!user) {
             return {
@@ -131,7 +131,7 @@ type OpenControllerResponse = {
 }
 
 
-export const openController = async (id: number, name: string) => {
+export const openController = async (id: number, name: string, token?: string) => {
     try {
         
         const username = process.env.KOMMER_LOGIN
@@ -188,7 +188,7 @@ export const openController = async (id: number, name: string) => {
                 error: 'Something went wrong'
             };
 
-            await createLogs(`Open door ${name} (${id})`, 'failed', 'Something went wrong');
+            await createLogs(`Open door ${name} (${id})`, 'failed', 'Something went wrong', token);
 
             return ans;
         }
@@ -209,7 +209,7 @@ export const openController = async (id: number, name: string) => {
             status: 'success',
         };
 
-        await createLogs(`Open door ${name} (${id})`, 'success', '');
+        await createLogs(`Open door ${name} (${id})`, 'success', '', token);
         return ans;
 
     } catch (error) {
@@ -220,7 +220,7 @@ export const openController = async (id: number, name: string) => {
             error: 'Something went wrong'
         };
 
-        await createLogs(`Open door ${name} (${id})`, 'failed', 'Something went wrong');
+        await createLogs(`Open door ${name} (${id})`, 'failed', 'Something went wrong', token);
         return ans;
     }
 };

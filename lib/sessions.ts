@@ -5,7 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { cookies } from 'next/headers'
 
 
-export const createSession = async (userid: number) => {
+export const createSession = async (userid: number, mode: 'PC' | 'MOBILE' = 'PC') => {
     const cookieStore = await cookies()
     try {
 
@@ -16,7 +16,9 @@ export const createSession = async (userid: number) => {
             query, [userid, token]
         );
 
-        cookieStore.set('token', token)
+        if(mode === 'PC' ) {
+            cookieStore.set('token', token)
+        }
 
         return token
     } catch (error) {
@@ -25,15 +27,21 @@ export const createSession = async (userid: number) => {
     }
 }
 
+
 type ResponseGetUserId = {
     status: 'success' | 'failed'
     userid?: number
     error?: string
 }
 
-export const getUserId = async () => {
-    const cookieStore = await cookies()
-    const token = cookieStore.get('token')
+export const getUserId = async (tokenProps?: string) => {
+    let cookieStore = await cookies()
+    let token
+    if(!tokenProps) {
+        token = cookieStore.get('token')?.value
+    } else {
+        token = tokenProps
+    }
     if(!token) {
         const ans: ResponseGetUserId = {
             status: 'failed',
@@ -45,7 +53,7 @@ export const getUserId = async () => {
     try {
         const query = 'SELECT * FROM sessions WHERE token = $1'
         const result = await (conn as Pool).query(
-            query, [token.value]
+            query, [token]
         );
         if(result.rows.length < 1) {
             const ans: ResponseGetUserId = {

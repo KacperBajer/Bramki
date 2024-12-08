@@ -6,10 +6,10 @@ import { User } from "./types";
 import { createLogs } from "./logs";
 
 
-export const getUser = async () => {
+export const getUser = async (token?: string) => {
     try {
 
-        const userid = await getUserId()
+        const userid = await getUserId(token)
 
         if (userid.status === 'failed') {
             return false
@@ -38,7 +38,6 @@ export const getUser = async () => {
         const result = await (conn as Pool).query(
             query, [userid.userid]
         );
-        console.log(result.rows)
         return result.rows[0] as User
     } catch (error) {
         console.log(error)
@@ -52,10 +51,13 @@ type LoginResponse = {
     token?: string
 }
 
-export const loginUser = async (email: string, password: string) => {
+export const loginUser = async (email: string, password: string, mode: 'PC' | 'MOBILE' = 'PC') => {
     if (!email || !password) {
         console.log('No email or password')
-        return
+        return {
+            status: 'failed',
+            error: 'No email or password'
+        } as LoginResponse
     }
     try {
         const query = 'SELECT * FROM users WHERE email = $1 AND password = $2'
@@ -70,7 +72,7 @@ export const loginUser = async (email: string, password: string) => {
             return ans
         }
 
-        const session = await createSession(result.rows[0].id)
+        const session = await createSession(result.rows[0].id, mode)
 
         if (session === 'failed') {
             const ans: LoginResponse = {
@@ -84,7 +86,7 @@ export const loginUser = async (email: string, password: string) => {
             status: 'success',
             token: session
         }
-        const createLog = await createLogs(`Log In`, 'success', '')
+        await createLogs(`Log In`, 'success', '', result.rows[0].id)
         return ans
     } catch (error) {
         console.log(error)

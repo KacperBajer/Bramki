@@ -57,9 +57,9 @@ export const getLogs = async (page: number) => {
     }
 }
 
-export const createLogs = async (action: string, status: 'success' | 'failed', comment: string) => {
+export const createLogs = async (action: string, status: 'success' | 'failed', comment: string, token?: string) => {
     try {
-        const user = await getUser()
+        const user = await getUser(token)
         if(!user) {
             return
         }
