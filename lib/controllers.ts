@@ -164,7 +164,7 @@ export const openController = async (id: number, name: string, token?: string) =
         const response = await fetch(link.data as string, {
             method: 'GET',
             headers: {
-                'Cookie': `sessionidadms=${sessionId}`,
+                'Cookie': `sessionidadms=${sessionId.data}`,
             },
             credentials: 'include',
         });

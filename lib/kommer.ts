@@ -65,25 +65,3 @@ export const createKommerSession = async () => {
         } as CreateKommerSessionResponse
     }
 }
-export const checkCard = async () => {
-    try {
-        const sessionId = await createKommerSession()
-
-        const response = await fetch('http://bramki.zs1mm.local/data/personnel/Employee/?o=PIN,DeptID__code,lastname,Card,EName&stamp=1733685415206&Card__icontains=3481208851&l=15&mnp=15&', {
-            method: 'POST',
-            headers: {
-                'Cookie': `sessionidadms=${sessionId}`,
-            },
-            credentials: 'include',
-        });
-
-        const data = await response.json()
-        console.log(data)
-
-        if (!response.ok) {
-            throw new Error('Failed to open door');
-        }
-    } catch (error) {
-        
-    }
-}
