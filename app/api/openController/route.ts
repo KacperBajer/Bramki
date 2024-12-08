@@ -21,7 +21,7 @@ export async function GET(req: NextRequest, res: NextResponse) {
             return  NextResponse.json({message: 'Session expired'}, {status: 401})            
         }
 
-        const controllers = await openController(parseInt(controllerid as string), controllername as string)
+        const controllers = await openController(parseInt(controllerid as string), controllername as string, token)
 
         if(controllers.status === 'failed') {
             return  NextResponse.json({message: controllers.error}, {status: 500})
