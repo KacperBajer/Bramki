@@ -11,10 +11,10 @@ export const getUser = async () => {
 
         const userid = await getUserId()
 
-        if(userid.status === 'failed') {
+        if (userid.status === 'failed') {
             return false
         }
-        
+
         const query = `
             SELECT 
                 u.id, 
@@ -53,7 +53,7 @@ type LoginResponse = {
 }
 
 export const loginUser = async (email: string, password: string) => {
-    if(!email || !password) {
+    if (!email || !password) {
         console.log('No email or password')
         return
     }
@@ -62,17 +62,17 @@ export const loginUser = async (email: string, password: string) => {
         const result = await (conn as Pool).query(
             query, [email, password]
         );
-        if(result.rows.length < 1) {
+        if (result.rows.length < 1) {
             const ans: LoginResponse = {
                 status: 'failed',
                 error: 'Incorrect email or password'
             }
             return ans
         }
-        
+
         const session = await createSession(result.rows[0].id)
-        
-        if(session === 'failed') {
+
+        if (session === 'failed') {
             const ans: LoginResponse = {
                 status: 'failed',
                 error: 'Something wants wrong'
@@ -156,3 +156,101 @@ export const getUsers = async (page: number) => {
         } as GetUsersResponse;
     }
 };
+
+type CreateUserResponse = {
+    status: 'success' | 'failed'
+    error?: string
+}
+
+export const createUser = async (email: string, password: string, firstname: string, lastname: string, userclass?: string, role: string = 'User') => {
+    try {
+        const query = `
+        INSERT INTO users (email, password, firstname, lastname, role, class)
+        VALUES ($1, $2, $3, $4, $5, $6);
+    `;
+
+        const values = [email, password, firstname, lastname, role, userclass || null];
+
+        const result = await (conn as Pool).query(query, values);
+
+        return {
+            status: 'success'
+        } as CreateUserResponse
+
+    } catch (error) {
+        return {
+            status: 'failed',
+            error: 'Something wants wrong'
+        } as CreateUserResponse
+    }
+}
+
+
+type EditUserResponse = {
+    status: 'success' | 'failed'
+    error?: string
+}
+
+export const editUser = async (id: number, email: string, firstname: string, lastname: string, userclass?: string, role: string = 'User') => {
+    try {
+        const query = `
+        UPDATE users
+        SET email = $1,
+            firstname = $2,
+            lastname = $3,
+            role = $4,
+            class = $5
+        WHERE id = $6;
+    `;
+
+        const values = [email, firstname, lastname, role, userclass || null, id];
+
+        const result = await (conn as Pool).query(query, values);
+
+        return {
+            status: 'success'
+        } as EditUserResponse
+
+    } catch (error) {
+        console.log(error)
+        return {
+            status: 'failed',
+            error: 'Something wants wrong'
+        } as EditUserResponse
+    }
+}
+
+type AddCardResponse = {
+    status: 'failed' | 'success'
+    error?: string
+}
+
+export const addCard = async (userid: number, cardid: number, type: 'UHF' | 'RFID') => {
+    try {
+        const query = `
+            INSERT INTO cards (userid, id, type)
+            VALUES ($1, $2, $3);
+        `;
+
+        const values = [userid, cardid, type];
+
+        const result = await (conn as Pool).query(query, values);
+
+        return {
+            status: 'success',
+            card: result.rows[0],
+        } as AddCardResponse
+
+    } catch (error) {
+        if ((error as any).code === '23505') {
+            return {
+                status: 'failed',
+                error: 'Card is already added.',
+            };
+        }
+        return {
+            status: 'failed',
+            error: 'Something went wrong',
+        } as AddCardResponse
+    }
+}

@@ -4,12 +4,17 @@ import React from 'react'
 import Button from './Button'
 import { Controller } from '@/lib/types'
 import { openController } from '@/lib/controllers'
+import { toast } from 'react-toastify'
 
 const ControllerCard = ({type, name, id, mode}: Controller) => {
 
     const open = async () => {
         const res = await openController(id, name)
-        console.log(res)
+        if(res.status === 'failed') {
+            toast.error(res.error || 'Something went wrong')
+            return
+        }
+        toast.success(`Opened ${name}`)
     }
 
     return (

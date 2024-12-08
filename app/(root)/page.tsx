@@ -7,7 +7,6 @@ import React from 'react'
 const page = async () => {
 
   const controllers = await getControllers()
-  console.log(controllers)
 
   return (
     <div className='w-full min-h-[calc(100vh-32px)] border-2 border-dark-100 rounded-md py-6 px-4'>

@@ -3,7 +3,7 @@ export type User = {
     firstname: string
     lastname: string
     email: string
-    role: string
+    role: 'User' | 'Admin'
     class: string
     cards: Card[]
 }

@@ -29,7 +29,7 @@ export const getControllers = async () => {
             } as GetControllersResponse;
         }
 
-        const isAdmin = user.role === 'admin';
+        const isAdmin = user.role === 'Admin';
 
         let controllersQuery = 'SELECT id, type, name, mode FROM controllers';
  
@@ -133,40 +133,94 @@ type OpenControllerResponse = {
 
 export const openController = async (id: number, name: string) => {
     try {
+        
+        const username = process.env.KOMMER_LOGIN
+        const password = process.env.KOMMER_PASS
 
-        const link = await getOpenLink(id)
+        const loginResponse = await fetch("http://bramki.zs1mm.local/accounts/login/", {
+            method: "POST",
+            headers: {
+                "Accept": "text/html, */*",
+                "Accept-Encoding": "gzip, deflate",
+                "Content-Type": "application/x-www-form-urlencoded",
+                "Connection": "keep-alive"
+            },
+            body: new URLSearchParams({
+                "username": username as string,
+                "password": password as string
+            })
+        });
+
+        if (!loginResponse.ok) {
+           
+        const ans: OpenControllerResponse = {
+            status: 'failed',
+            error: 'Something went wrong'
+        };
+        return ans
+        }
+
+        const setCookieHeader = loginResponse.headers.get("Set-Cookie");
+        if (!setCookieHeader) {
+            const ans: OpenControllerResponse = {
+                status: 'failed',
+                error: 'Something went wrong with cookies'
+            };
+            return ans
+        }
+
+        const sessionMatch = /sessionidadms=([^;]+)/.exec(setCookieHeader);
+        if (!sessionMatch) {
+            const ans: OpenControllerResponse = {
+                status: 'failed',
+                error: 'Something went wrong with login cookies'
+            };
+            return ans
+        }
+
+        const sessionId = sessionMatch[1];
+
+        const link = await getOpenLink(id);
 
         if (link.status === 'failed') {
             const ans: OpenControllerResponse = {
                 status: 'failed',
-                error: 'Something wants wrong'
-            }
+                error: 'Something went wrong'
+            };
 
-            const createLog = await createLogs(`Open door ${name} (${id})`, 'failed', 'Something wants wrong')
+            await createLogs(`Open door ${name} (${id})`, 'failed', 'Something went wrong');
 
-            return ans
+            return ans;
         }
 
         const response = await fetch(link.data as string, {
             method: 'GET',
             headers: {
-                'Cookie': `sessionidadms=31e10af6f798790c3db63e76493b8dc8`,
+                'Cookie': `sessionidadms=${sessionId}`,
             },
             credentials: 'include',
-        })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to open door');
+        }
 
         const ans: OpenControllerResponse = {
             status: 'success',
-        }
-        const createLog = createLogs(`Open door ${name} (${id})`, 'success', '')
-        return ans
+        };
+
+        await createLogs(`Open door ${name} (${id})`, 'success', '');
+        return ans;
+
     } catch (error) {
+        console.error(error);
+
         const ans: OpenControllerResponse = {
             status: 'failed',
-            error: 'Something wants wrong'
-        }
-        console.log(error)
-        const createLog = await createLogs(`Open door ${name} (${id})`, 'failed', 'Something wants wrong')
-        return ans
+            error: 'Something went wrong'
+        };
+
+        await createLogs(`Open door ${name} (${id})`, 'failed', 'Something went wrong');
+        return ans;
     }
-}
+};

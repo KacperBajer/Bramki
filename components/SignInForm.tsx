@@ -11,13 +11,13 @@ const SignInForm = () => {
     type FormData = z.infer<typeof formSchema>
 
     const [formData, setFormData] = useState<FormData>({
-        username: '',
+        email: '',
         password: '',
     })
     const [errors, setErrors] = useState<FormErrors>({})
 
     const formSchema = z.object({
-        username: z.string().min(1, "Username is required"),
+        email: z.string().min(1, "Email is required"),
         password: z.string().min(1, "Password is required")
     })
 
@@ -41,7 +41,7 @@ const SignInForm = () => {
         if(Object.keys(checkErros).length !== 0) {
             return
         }
-        const ans = await loginUser(formData.username, formData.password)
+        const ans = await loginUser(formData.email, formData.password)
         console.log(ans)
     }
 
@@ -53,11 +53,11 @@ const SignInForm = () => {
   return (
     <form onSubmit={handleSubmit} className='flex flex-col gap-2'>
         <InputField 
-            placeholder='Username'
-            name='username'
-            value={formData.username}
+            placeholder='Email'
+            name='email'
+            value={formData.email}
             onChange={handleChange}
-            error={errors.username && errors.username[0]}
+            error={errors.email && errors.email[0]}
         />
         <InputField 
             placeholder='Password'

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Open_Sans } from 'next/font/google'
 import "./globals.css";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const font = Open_Sans({
   weight: '400',
@@ -23,6 +25,18 @@ export default function RootLayout({
       <body
         className={`${font.className} antialiased bg-black text-white`}
       >
+        <ToastContainer
+          position="top-center"
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="dark"
+          />
         {children}
       </body>
     </html>

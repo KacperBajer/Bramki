@@ -64,7 +64,7 @@ export const createLogs = async (action: string, status: 'success' | 'failed', c
             return
         }
 
-        const query = 'INSERT INTO logs (userid, action, status, comment, date) VALUES ($1, $2, $3, $4, $5, $6)'
+        const query = 'INSERT INTO logs (userid, action, status, comment, date) VALUES ($1, $2, $3, $4, $5)'
         const result = await (conn as Pool).query(
             query, [user.id, action, status, comment, getCurrentDateForDatabase()]
         );
