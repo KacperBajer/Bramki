@@ -6,6 +6,7 @@ import { Controller, User } from "./types";
 import { getUserId } from "./sessions";
 import { getUser } from "./users";
 import { createLogs } from "./logs";
+import { createKommerSession } from "./kommer";
 
 type getControllersData = {
     in: Controller[]
@@ -134,51 +135,18 @@ type OpenControllerResponse = {
 export const openController = async (id: number, name: string, token?: string) => {
     try {
         
-        const username = process.env.KOMMER_LOGIN
-        const password = process.env.KOMMER_PASS
+       const sessionId = await createKommerSession()
 
-        const loginResponse = await fetch("http://bramki.zs1mm.local/accounts/login/", {
-            method: "POST",
-            headers: {
-                "Accept": "text/html, */*",
-                "Accept-Encoding": "gzip, deflate",
-                "Content-Type": "application/x-www-form-urlencoded",
-                "Connection": "keep-alive"
-            },
-            body: new URLSearchParams({
-                "username": username as string,
-                "password": password as string
-            })
-        });
-
-        if (!loginResponse.ok) {
-           
+       if (sessionId.status === 'failed') {
         const ans: OpenControllerResponse = {
             status: 'failed',
             error: 'Something went wrong'
         };
-        return ans
-        }
 
-        const setCookieHeader = loginResponse.headers.get("Set-Cookie");
-        if (!setCookieHeader) {
-            const ans: OpenControllerResponse = {
-                status: 'failed',
-                error: 'Something went wrong with cookies'
-            };
-            return ans
-        }
+        await createLogs(`Open door ${name} (${id})`, 'failed', 'Something went wrong', token);
 
-        const sessionMatch = /sessionidadms=([^;]+)/.exec(setCookieHeader);
-        if (!sessionMatch) {
-            const ans: OpenControllerResponse = {
-                status: 'failed',
-                error: 'Something went wrong with login cookies'
-            };
-            return ans
-        }
-
-        const sessionId = sessionMatch[1];
+        return ans;
+    }
 
         const link = await getOpenLink(id);
 
