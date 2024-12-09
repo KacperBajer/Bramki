@@ -80,18 +80,30 @@ export const getUserId = async (tokenProps?: string) => {
     }
 }
 
-export const deleteSession = async () => {
+export const deleteSession = async (tokenProps?: string) => {
     const cookieStore = await cookies()
     try {
 
-        const token = cookieStore.get('token')
+        let token
+
+        if(!tokenProps) {
+            token = cookieStore.get('token')
+        } else {
+            token = tokenProps
+        }
+
+        if(!token) {
+            return 'failed'
+        }
 
         const query = 'DELETE FROM sessions WHERE token = $1'
         const result = await (conn as Pool).query(
             query, [token]
         );
 
-        cookieStore.delete('token')
+        if(!tokenProps) {
+            cookieStore.delete('token')
+        }
 
         return 'success'
     } catch (error) {

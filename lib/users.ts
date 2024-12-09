@@ -72,6 +72,13 @@ export const loginUser = async (email: string, password: string, mode: 'PC' | 'M
             return ans
         }
 
+        if(mode === 'PC' && result.rows[0].role !== "Admin") {
+            return {
+                status: 'failed',
+                error: 'Only for admins'
+            } as LoginResponse
+        }
+
         const session = await createSession(result.rows[0].id, mode)
 
         if (session === 'failed') {
@@ -86,7 +93,7 @@ export const loginUser = async (email: string, password: string, mode: 'PC' | 'M
             status: 'success',
             token: session
         }
-        await createLogs(`Log In`, 'success', '', result.rows[0].id)
+        await createLogs(`Log In`, 'success', '', session)
         return ans
     } catch (error) {
         console.log(error)
@@ -234,9 +241,7 @@ export const addCard = async (userid: number, cardid: number, type: 'UHF' | 'RFI
             VALUES ($1, $2, $3);
         `;
 
-        const values = [userid, cardid, type];
-
-        const result = await (conn as Pool).query(query, values);
+        const result = await (conn as Pool).query(query, [userid, cardid, type]);
 
         return {
             status: 'success',
@@ -248,11 +253,47 @@ export const addCard = async (userid: number, cardid: number, type: 'UHF' | 'RFI
             return {
                 status: 'failed',
                 error: 'Card is already added.',
-            };
+            } as AddCardResponse
         }
         return {
             status: 'failed',
             error: 'Something went wrong',
         } as AddCardResponse
+    }
+}
+
+type DeleteCardResponse = {
+    status: 'failed' | 'success'
+    error?: string
+}
+
+export const deleteCard = async (id: number, token?: string) => {
+    try {
+        const query = `
+            DELETE FROM cards
+            WHERE id = $1;
+        `;
+
+        const result = await (conn as Pool).query(query, [id]);
+
+        if (result.rowCount === 0) {
+            return {
+                status: 'failed',
+                error: 'Card not found.',
+            } as DeleteCardResponse;
+        }
+
+        await createLogs('Delete card', 'success', `ID: ${id}`, token)
+
+        return {
+            status: 'success',
+            message: 'Card deleted successfully.',
+        } as DeleteCardResponse;
+
+    } catch (error) {
+        return {
+            status: 'failed',
+            error: 'Something went wrong',
+        } as DeleteCardResponse;
     }
 }

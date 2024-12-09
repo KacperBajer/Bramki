@@ -9,7 +9,7 @@ const layout = async ({
   }>) => {
 
     const user = await getUser()
-    if(user) {
+    if(user && user.role === 'Admin') {
         redirect('/')
     }
 

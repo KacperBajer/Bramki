@@ -3,10 +3,11 @@ export type User = {
     firstname: string
     lastname: string
     email: string
-    role: 'User' | 'Admin'
+    role: Roles
     class: string
     cards: Card[]
 }
+export type Roles = 'User' | 'Admin'
 export type Card = {
     id: number,
     type: 'UHF' | 'RFID'

@@ -4,6 +4,7 @@ import InputField from './InputField'
 import Button from './Button'
 import { z } from 'zod'
 import { loginUser } from '@/lib/users'
+import { toast } from 'react-toastify'
 
 const SignInForm = () => {
 
@@ -43,6 +44,11 @@ const SignInForm = () => {
         }
         const ans = await loginUser(formData.email, formData.password)
         console.log(ans)
+        if(ans.status === 'failed') {
+            toast.error(ans.error || 'Something went wrong')
+            return
+        }
+        toast.success('Successfully logged in')
     }
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {

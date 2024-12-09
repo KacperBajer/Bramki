@@ -7,7 +7,7 @@ import SelectBox from './SelectBox'
 import { IoMdClose } from "react-icons/io";
 import { editUser } from '@/lib/users'
 import { toast } from 'react-toastify'
-import { User } from '@/lib/types'
+import { Roles, User } from '@/lib/types'
 
 type Props = {
   setShowPopup: (e: boolean) => void
@@ -30,7 +30,7 @@ const EditUserPopup = ({ setShowPopup, user }: Props) => {
     class: user?.class || '',
   })
 
-  const [role, setRole] = useState('User')
+  const [role, setRole] = useState<Roles | string>(user.role || 'User')
 
   type FormErrors = Partial<Record<keyof FormData, string[]>>
   type FormData = z.infer<typeof schema>
