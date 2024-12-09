@@ -52,7 +52,7 @@ const UsersTable = ({ data, fetchUsers }: Props) => {
                             <div className='text-left flex items-center w-[300px]'>
                                 <p>{item.email}</p>
                             </div>
-                            <div className='text-left w-[250px] flex gap-2'>
+                            <div className='text-left w-[250px] flex flex-wrap gap-2'>
                                 {item.cards[0].id && item.cards.map((card, index) => (
                                     <button onClick={() => setShowCardPopup(card)} key={index} className='text-blue-500 hover:cursor-pointer'>[{card.id}]</button>
                                 ))}
