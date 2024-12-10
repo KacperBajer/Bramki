@@ -10,11 +10,15 @@ export async function POST(req: NextRequest, res: NextResponse) {
     const lastname = headers.get('lastname')
     const userClass = headers.get('userClass')   
 
-    const { key } = body;
+
+    const { code } = body;
+
+    console.log(email, password, firstname, lastname, code)
+
 
     try {
 
-        if (!email || !password || !firstname || !lastname || !key) {
+        if (!email || !password || !firstname || !lastname || !code) {
           return  NextResponse.json({message: 'Send all required data'}, {status: 400})
         }
         
@@ -28,7 +32,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
           return NextResponse.json({message: 'Email is used'}, {status: 500})
         }
 
-        const validateData = await validateUserRequest(email, key, password, firstname, lastname)
+        const validateData = await validateUserRequest(email, code, password, firstname, lastname)
 
         if(validateData.status === 'failed') {
           return NextResponse.json({message: validateData.error || 'Something went wrong'}, {status: 500})

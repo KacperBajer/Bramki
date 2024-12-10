@@ -285,7 +285,7 @@ export type ValidateUserRequestResponse =
 
 export const validateUserRequest = async (
   email: string,
-  key: number,
+  key: string,
   password: string,
   firstname: string,
   lastname: string
@@ -293,10 +293,11 @@ export const validateUserRequest = async (
   try {
     const query = `
     SELECT * FROM createrequest
-    WHERE email = $1 AND key = $2 AND password = $3 AND firstname = $4 AND lastname = $5;
+    WHERE email = $1 AND key = $2;
   `;
 
-  const values = [email, key, password, firstname, lastname];
+  const values = [email, key];
+
 
   const result = await (conn as Pool).query(query, values);
 
