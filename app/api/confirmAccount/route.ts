@@ -1,4 +1,4 @@
-import { createUser, loginUser } from "@/lib/users";
+import { createUser, isEmailAvailable, loginUser, validateUserRequest } from "@/lib/users";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, res: NextResponse) {
@@ -18,14 +18,32 @@ export async function POST(req: NextRequest, res: NextResponse) {
           return  NextResponse.json({message: 'Send all required data'}, {status: 400})
         }
         
+        const checkEmailAvailable = await isEmailAvailable(email)
+
+        if(checkEmailAvailable === 'Error') {
+          return  NextResponse.json({message: 'Something went wrong'}, {status: 500})
+        }
+
+        if(!checkEmailAvailable) {
+          return NextResponse.json({message: 'Email is used'}, {status: 500})
+        }
+
+        const validateData = await validateUserRequest(email, key, password, firstname, lastname)
+
+        if(validateData.status === 'failed') {
+          return NextResponse.json({message: validateData.error || 'Something went wrong'}, {status: 500})
+        }
+
         const createAcc = await createUser(email, password, firstname, lastname, userClass as string)
 
+        if(createAcc.status === 'failed') {
+          return  NextResponse.json({message: createAcc.error || 'Something went wrong'}, {status: 500})
+        }
+
         const validate = await loginUser(email, password, 'MOBILE')
+
         if(validate.status === 'failed') {
-            if(validate.error === 'Incorrect email or password') {
-                return NextResponse.json({message: validate.error}, {status: 401})
-            }
-            return  NextResponse.json({message: validate.error}, {status: 500})
+          return  NextResponse.json({message: validate.error || 'Something went wrong'}, {status: 500})
         }
         return  NextResponse.json({message: 'Success', token: validate.token}, {status: 200})
     } catch (error) {

@@ -5,6 +5,7 @@ import { createSession, getUserId } from "./sessions";
 import { User } from "./types";
 import { createLogs } from "./logs";
 import { sendMail } from "./mailsender";
+import { getCurrentDate, getCurrentDatePlus15Minutes } from "./func";
 
 export const getUser = async (token?: string) => {
   try {
@@ -41,6 +42,16 @@ export const getUser = async (token?: string) => {
     return false;
   }
 };
+
+export const isEmailAvailable = async (email: string) => {
+  try {
+    const query = 'SELECT * FROM users WHERE email = $1'
+    const result = await (conn as Pool).query(query, [email]);
+    return result.rows.length < 1
+  } catch (error) {
+    return 'Error'
+  }
+}
 
 type LoginResponse = {
   status: "success" | "failed";
@@ -203,7 +214,7 @@ export const createUser = async (
   } catch (error) {
     return {
       status: "failed",
-      error: "Something wants wrong",
+      error: "Something went wrong",
     } as CreateUserResponse;
   }
 };
@@ -223,11 +234,12 @@ export const createUserRequest = async (
 ) => {
   try {
     const query = `
-        INSERT INTO createrequest (email, password, firstname, lastname, class, key)
-        VALUES ($1, $2, $3, $4, $5, $6);
+        INSERT INTO createrequest (email, password, firstname, lastname, class, key, expires)
+        VALUES ($1, $2, $3, $4, $5, $6, $7);
     `;
 
     const key = Math.floor(100000 + Math.random() * 900000)
+    const expires = getCurrentDatePlus15Minutes()
 
     const values = [
       email,
@@ -236,11 +248,12 @@ export const createUserRequest = async (
       lastname,
       userclass || null,
       key,
+      expires,
     ];
 
     const result = await (conn as Pool).query(query, values);
 
-    const mail = await sendMail(email, key)
+    const mail = await sendMail(email, key, expires)
 
     if(mail === 'failed') {
         return {
@@ -259,6 +272,62 @@ export const createUserRequest = async (
       status: "failed",
       error: "Something wants wrong",
     } as CreateUserRequestResponse;
+  }
+};
+
+export type ValidateUserRequestResponse =
+  {
+  status: "success" | "failed";
+  data?: any;
+  error?: string
+}
+
+
+export const validateUserRequest = async (
+  email: string,
+  key: number,
+  password: string,
+  firstname: string,
+  lastname: string
+) => {
+  try {
+    const query = `
+    SELECT * FROM createrequest
+    WHERE email = $1 AND key = $2 AND password = $3 AND firstname = $4 AND lastname = $5;
+  `;
+
+  const values = [email, key, password, firstname, lastname];
+
+  const result = await (conn as Pool).query(query, values);
+
+  if (result.rows.length === 0) {
+    return {
+      status: "failed",
+      error: "Invalid key",
+    } as ValidateUserRequestResponse;
+  }
+
+  const request = result.rows[0];
+
+  const currentDate = getCurrentDate();
+
+  if (new Date(request.expires) <= new Date(currentDate)) {
+    return {
+      status: "failed",
+      error: "Code has expired",
+    } as ValidateUserRequestResponse;
+  }
+
+
+    return {
+      status: "success",
+    } as ValidateUserRequestResponse;
+  } catch (error) {
+    console.log(error);
+    return {
+      status: "failed",
+      error: "Something went wrong",
+    } as ValidateUserRequestResponse;
   }
 };
 

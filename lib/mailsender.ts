@@ -1,7 +1,9 @@
 'use server'
+import { formatDateFromDate } from "./func";
+
 const nodemailer = require('nodemailer');
 
-export const sendMail = async (to: string, key: string | number) => {
+export const sendMail = async (to: string, key: string | number, expires: Date) => {
   const transporter = nodemailer.createTransport({
     host: "smtp-mail.outlook.com",
     port: 587,
@@ -24,6 +26,7 @@ export const sendMail = async (to: string, key: string | number) => {
       subject: `Authorization code`,
       html: `
       <p>Code: ${key} </p>
+      <p>Code expires: ${formatDateFromDate(expires)}</p>
       `,
   })
 

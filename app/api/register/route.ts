@@ -1,5 +1,5 @@
 import { isValidEmail } from "@/lib/func";
-import { createUserRequest } from "@/lib/users";
+import { createUserRequest, isEmailAvailable } from "@/lib/users";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, res: NextResponse) {
@@ -19,8 +19,16 @@ export async function POST(req: NextRequest, res: NextResponse) {
           return NextResponse.json({message: 'You should use school email'}, {status: 500})
         }
 
+        const checkEmailAvailable = await isEmailAvailable(email)
+
+        if(checkEmailAvailable === 'Error') {
+          return  NextResponse.json({message: 'Something went wrong'}, {status: 500})
+        }
+        if(!checkEmailAvailable) {
+          return NextResponse.json({message: 'Email is used'}, {status: 500})
+        }
+
         const createacc = await createUserRequest(email, password, firstname, lastname, userclass)
-        console.log(createacc)
         if(createacc.status === 'failed') {
           return  NextResponse.json({message: createacc.error || 'Something went wrong'}, {status: 500})
         }
