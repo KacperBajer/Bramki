@@ -17,3 +17,8 @@ export function formatDate(isoDate: string) {
 
     return date.toLocaleDateString('pl-PL', options);
 }
+
+export function isValidEmail(email: string) {
+    const domain = "@live.zs1mm.edu.pl";
+    return email.endsWith(domain);
+}

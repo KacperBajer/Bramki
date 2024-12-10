@@ -169,8 +169,13 @@ export const openController = async (id: number, name: string, token?: string) =
             credentials: 'include',
         });
 
+        console.log(response)
+
         if (!response.ok) {
-            throw new Error('Failed to open door');
+            return {
+                status: 'failed',
+                error: 'Failed open door'
+            } as OpenControllerResponse
         }
 
         const ans: OpenControllerResponse = {
