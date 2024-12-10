@@ -30,6 +30,7 @@ export const sendMail = async (to: string, key: string | number) => {
   return 'success'
 
 } catch (error) {
+  console.log(error)
   return 'failed'
 }
 

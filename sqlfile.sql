@@ -63,6 +63,37 @@ ALTER TABLE public.controllers ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY 
 
 
 --
+-- Name: createrequest; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.createrequest (
+    id bigint NOT NULL,
+    email text,
+    firstname text,
+    lastname text,
+    class text,
+    password text,
+    key text
+);
+
+
+ALTER TABLE public.createrequest OWNER TO postgres;
+
+--
+-- Name: createrequest_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+ALTER TABLE public.createrequest ALTER COLUMN id ADD GENERATED ALWAYS AS IDENTITY (
+    SEQUENCE NAME public.createrequest_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1
+);
+
+
+--
 -- Name: logs; Type: TABLE; Schema: public; Owner: postgres
 --
 
@@ -179,12 +210,22 @@ COPY public.controllers (id, type, name, openlink, mode) FROM stdin;
 
 
 --
+-- Data for Name: createrequest; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.createrequest (id, email, firstname, lastname, class, password, key) FROM stdin;
+1	kacper.bajer@live.zs1mm.edu.pl	Kacper	Bajer	\N	123123	504014
+\.
+
+
+--
 -- Data for Name: logs; Type: TABLE DATA; Schema: public; Owner: postgres
 --
 
 COPY public.logs (id, action, status, comment, userid, date) FROM stdin;
 1	Open door Bramka 1 (4)	failed	Something wants wrong	1	\N
 2	Open door Bramka 1 (4)	failed	Something wants wrong	1	2024-12-06T22:59:16.453Z
+3	Log In	success		1	2024-12-09T21:10:33.855Z
 \.
 
 
@@ -197,6 +238,8 @@ COPY public.sessions (id, userid, token) FROM stdin;
 2	2	86bf1568-6336-49d2-a162-6270c54d6ab8
 3	3	3f63a56d-b1d7-427a-8bd7-e82e29d8c05d
 4	4	b30eee22-a5bd-4200-93c5-d5aa474fea6a
+5	1	84d86e6c-8024-4bd2-a7be-9987a5680f93
+6	1	b7d49655-f274-46dd-98e8-f30e5288912b
 \.
 
 
@@ -205,10 +248,10 @@ COPY public.sessions (id, userid, token) FROM stdin;
 --
 
 COPY public.users (id, firstname, password, role, lastname, email, class) FROM stdin;
-1	Kacper	123123	admin	Bajer	kacperbajer82@gmail.com	3INB
 2	Uczen	123123	user	Szkoly	uczenszkoly@gmail.com	3INB
 3	uczen	123123	user	szkoly	uczenszkoly2@gmail.com	3INB
 4	uczen	123123	user	szkoly	uczenszkoly3@gmail.com	3INB
+1	Kacper	123123	Admin	Bajer	kacperbajer82@gmail.com	3INB
 \.
 
 
@@ -220,17 +263,24 @@ SELECT pg_catalog.setval('public.controlers_id_seq', 7, true);
 
 
 --
+-- Name: createrequest_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.createrequest_id_seq', 1, true);
+
+
+--
 -- Name: logs_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.logs_id_seq', 2, true);
+SELECT pg_catalog.setval('public.logs_id_seq', 3, true);
 
 
 --
 -- Name: sessions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.sessions_id_seq', 4, true);
+SELECT pg_catalog.setval('public.sessions_id_seq', 6, true);
 
 
 --
@@ -254,6 +304,14 @@ ALTER TABLE ONLY public.cards
 
 ALTER TABLE ONLY public.controllers
     ADD CONSTRAINT controlers_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: createrequest createrequest_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.createrequest
+    ADD CONSTRAINT createrequest_pkey PRIMARY KEY (id);
 
 
 --

@@ -254,6 +254,7 @@ export const createUserRequest = async (
       key: key
     } as CreateUserRequestResponse;
   } catch (error) {
+    console.log(error)
     return {
       status: "failed",
       error: "Something wants wrong",

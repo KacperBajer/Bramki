@@ -20,6 +20,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
         }
 
         const createacc = await createUserRequest(email, password, firstname, lastname, userclass)
+        console.log(createacc)
         if(createacc.status === 'failed') {
           return  NextResponse.json({message: createacc.error || 'Something went wrong'}, {status: 500})
         }
@@ -28,6 +29,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
 
     } catch (error) {
+      console.log(error)
         return  NextResponse.json({message: 'Something went wrong'}, {status: 500})
     }
 }
