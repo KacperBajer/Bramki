@@ -1,4 +1,5 @@
 import SideBar from '@/components/SideBar';
+import { User } from '@/lib/types';
 import { getUser } from '@/lib/users'
 import { redirect } from 'next/navigation';
 import React from 'react'
@@ -11,6 +12,7 @@ const layout = async ({
 
     const user = await getUser()
     if(!user || user.role !== 'Admin') {
+      console.log((user as User).role === 'Admin')
       redirect('/sign-in')
     }
 
