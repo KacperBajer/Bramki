@@ -11,14 +11,10 @@ const layout = async ({
   }>) => {
 
     const user = await getUser()
-    if(!user) {
-      console.log((user as unknown as User).role === 'Admin')
-      redirect('/sign-in')
-    }
 
   return (
     <div className='p-4 flex w-full'>
-        <SideBar user={user} />
+        <SideBar user={user as User} />
         {children}
     </div>
   )
