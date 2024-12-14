@@ -11,7 +11,7 @@ const layout = async ({
 
     const user = await getUser()
     if(!user || user.role !== 'Admin') {
-        redirect('/sign-in')
+      redirect('/sign-in')
     }
 
   return (
