@@ -4,6 +4,8 @@ import { getUser } from '@/lib/users'
 import { redirect } from 'next/navigation';
 import React from 'react'
 
+export const dynamic = 'force-dynamic';
+
 const layout = async ({
     children,
   }: Readonly<{
