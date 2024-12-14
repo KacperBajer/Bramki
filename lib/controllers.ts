@@ -32,7 +32,7 @@ export const getControllers = async (token?: string) => {
 
         const isAdmin = user.role === 'Admin';
 
-        let controllersQuery = 'SELECT id, type, name, mode FROM controllers';
+        let controllersQuery = 'SELECT id, type, name, mode FROM controllers ORDER BY "order" ASC';
  
 
         const controllersResult = await (conn as Pool).query(controllersQuery);
