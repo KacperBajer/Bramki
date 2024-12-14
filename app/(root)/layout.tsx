@@ -11,6 +11,8 @@ const layout = async ({
   }>) => {
 
     const user = await getUser()
+    console.log('user: ', !user, 'user and role: ', !user || user.role !== 'Admin')
+
 
   return (
     <div className='p-4 flex w-full'>
