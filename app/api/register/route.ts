@@ -2,7 +2,7 @@ import { isValidEmail } from "@/lib/func";
 import { createUserRequest, isEmailAvailable } from "@/lib/users";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
     const body = await req.json(); 
     const { email, password, firstname, lastname, userclass } = body;
 

@@ -9,7 +9,7 @@ type Props = {
 
 const CardInfoPopup = ({card, setShowPopup}: Props) => {
 
-    const ref = useRef(null)
+    const ref = useRef<HTMLDivElement>(null)
     
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {

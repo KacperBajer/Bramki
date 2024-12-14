@@ -1,7 +1,7 @@
 import { createUser, isEmailAvailable, loginUser, validateUserRequest } from "@/lib/users";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(req: NextRequest, res: NextResponse) {
+export async function POST(req: NextRequest) {
     const body = await req.json(); 
     const headers = req.headers
     const email = headers.get('email')

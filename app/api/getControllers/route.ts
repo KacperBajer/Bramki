@@ -1,7 +1,7 @@
 import { getControllers } from "@/lib/controllers";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
     const headers = req.headers;
     const token = headers.get('token');
 

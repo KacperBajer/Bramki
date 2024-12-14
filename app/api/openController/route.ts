@@ -2,7 +2,7 @@ import { getControllers, openController } from "@/lib/controllers";
 import { getUser } from "@/lib/users";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, res: NextResponse) {
+export async function GET(req: NextRequest) {
     const headers = req.headers;
     const token = headers.get('token');
     const controllerid = headers.get('controllerid');

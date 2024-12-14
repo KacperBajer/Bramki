@@ -1,7 +1,7 @@
 import { deleteCard } from "@/lib/users";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function DELETE(req: NextRequest, res: NextResponse) {
+export async function DELETE(req: NextRequest) {
     const headers = req.headers;
     const token = headers.get('token');
     const id = headers.get('id');
