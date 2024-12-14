@@ -11,8 +11,8 @@ const layout = async ({
   }>) => {
 
     const user = await getUser()
-    if(!user || user.role !== 'Admin') {
-      console.log((user as User).role === 'Admin')
+    if(!user) {
+      console.log((user as unknown as User).role === 'Admin')
       redirect('/sign-in')
     }
 
