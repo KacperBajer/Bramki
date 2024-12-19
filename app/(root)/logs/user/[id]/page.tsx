@@ -45,7 +45,7 @@ const page = () => {
   return (
     <div className='w-full min-h-[calc(100vh-32px)] border-2 border-dark-100 rounded-md py-6 px-4 overflow-x-hidden'>
         <div className='mb-8'>
-            <p className='ml-1 text-2xl font-bold'>Logs</p>
+            <p className='ml-1 text-2xl font-bold'>Logs for user with ID: {id}</p>
         </div>
         <LogsTable data={logs} />
         <div className='mt-5 flex justify-between items-start mx-4'>
