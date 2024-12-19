@@ -34,8 +34,8 @@ export const getLogs = async (page: number, userid?: number) => {
         const queryParams: any[] = [];
 
         if (userid) {
-            totalCountQuery += ' WHERE l.userid = $1';
-            logsQuery += ' WHERE l.userid = $1';
+            totalCountQuery += ' WHERE userid = $1';
+            logsQuery += ' WHERE userid = $1';
             queryParams.push(userid);
         }
 
