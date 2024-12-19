@@ -1,4 +1,4 @@
-import { deleteCard } from "@/lib/users";
+import { deleteCard, getUser } from "@/lib/users";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function DELETE(req: NextRequest) {
@@ -8,9 +8,19 @@ export async function DELETE(req: NextRequest) {
 
     try {
 
-        if (!token) {
-          return  NextResponse.json({message: 'No token'}, {status: 400})
+        if (!token || !id) {
+          return  NextResponse.json({message: 'No token or id'}, {status: 400})
         }
+
+          const user = await getUser(token)
+          
+          if(!user) {
+            return  NextResponse.json({message: 'Session expired'}, {status: 401})            
+          }
+
+          if(user.cards.some((card) => card.id === parseInt(id))) {
+            return  NextResponse.json({message: 'the card doesnt belong to you'}, {status: 500})            
+          }
 
         const res = await deleteCard(parseInt(id as string), token)
 
