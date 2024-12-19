@@ -14,7 +14,6 @@ const page = () => {
     const [totalRows, setTotalRows] = useState(0)
     const [page, setPage] = useState(1)
     const { id } = useParams();
-    console.log(id)
 
     useEffect(() => {
         const fetchLogs = async () => {

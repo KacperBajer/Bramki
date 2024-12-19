@@ -15,6 +15,9 @@ type GetLogsResponse = {
 
 export const getLogs = async (page: number, userid?: number) => {
     try {
+
+        console.log('id ', userid)
+
         const itemsPerPage = 50;
         const offset = (page - 1) * itemsPerPage;
 
