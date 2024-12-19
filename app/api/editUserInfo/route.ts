@@ -4,14 +4,13 @@ import { NextRequest, NextResponse } from "next/server";
 export async function PATCH(req: NextRequest) {
   const body = await req.json();
   const headers = req.headers
-  const id = headers.get('userid')
   const token = headers.get('token')
   const { firstname, lastname, userClass } = body;
 
-  console.log(firstname, lastname, userClass, id, token);
+  console.log(firstname, lastname, userClass, token);
   try {
 
-    if (!token || !firstname || !lastname || !id) {
+    if (!token || !firstname || !lastname) {
       return  NextResponse.json({message: 'First and last name are required'}, {status: 400})
     }
 
@@ -21,14 +20,7 @@ export async function PATCH(req: NextRequest) {
       return  NextResponse.json({message: 'Session expired'}, {status: 401})            
     }
 
-    console.log(parseInt(id) == user.id)
-
-    if(user.id !== parseInt(id as string)) {
-      console.log('d')
-      return  NextResponse.json({message: 'Something went wrong!'}, {status: 500})            
-    }
-
-    const edit = await editUser(parseInt(id as string), undefined, firstname, lastname, userClass)
+    const edit = await editUser(user.id, undefined, firstname, lastname, userClass)
 
     if(edit.status === 'failed') {
       return NextResponse.json(
