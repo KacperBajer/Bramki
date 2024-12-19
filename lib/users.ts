@@ -367,7 +367,7 @@ export const editUser = async (
   firstname: string,
   lastname: string,
   userclass?: string,
-  role: string = "Admin"
+  role: string = "User"
 ) => {
   try {
     let query = `

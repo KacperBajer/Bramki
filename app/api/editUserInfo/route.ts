@@ -20,7 +20,7 @@ export async function PATCH(req: NextRequest) {
       return  NextResponse.json({message: 'Session expired'}, {status: 401})            
     }
 
-    const edit = await editUser(user.id, undefined, firstname, lastname, userClass)
+    const edit = await editUser(user.id, undefined, firstname, lastname, userClass, user.role)
 
     if(edit.status === 'failed') {
       return NextResponse.json(
