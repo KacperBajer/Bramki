@@ -6,6 +6,8 @@ import Button from './Button'
 import EditUserPopup from './EditUserPopup'
 import { IoAddCircle } from "react-icons/io5";
 import AddCardPopup from './AddCardPopup'
+import DeleteUserPopup from './DeleteUserPopup'
+import { FaTrash } from "react-icons/fa";
 
 type Props = {
     data: User[]
@@ -17,6 +19,7 @@ const UsersTable = ({ data, fetchUsers }: Props) => {
     const [showCardPopup, setShowCardPopup] = useState<Card | boolean>(false)
     const [showEditUserPopup, setShowEditUserPopup] = useState<boolean | User>(false)
     const [showAddCardPopup, setShowAddCardPopup] = useState<number | boolean>(false)
+    const [showDeleteUserPopup, setShowDeleteUserPopup] = useState<boolean | number >(false)
 
     useEffect(() => {
         fetchUsers()
@@ -24,6 +27,7 @@ const UsersTable = ({ data, fetchUsers }: Props) => {
 
     return (
         <>
+            {showDeleteUserPopup && <DeleteUserPopup setShowPopup={setShowDeleteUserPopup} id={showDeleteUserPopup as number} />}
             {showCardPopup && <CardInfoPopup card={showCardPopup as Card} setShowPopup={setShowCardPopup} />}
             {showEditUserPopup && <EditUserPopup setShowPopup={setShowEditUserPopup} user={showEditUserPopup as User} />}
             {showAddCardPopup && <AddCardPopup setShowPopup={setShowAddCardPopup} userid={showAddCardPopup as number} />}
@@ -61,12 +65,17 @@ const UsersTable = ({ data, fetchUsers }: Props) => {
                             <div className='text-left min-w-[100px] flex items-center flex-1'>
                                 <p className={`capitalize ${item.role === 'Admin' && 'text-red-500'}`}>{item.role}</p>
                             </div>
-                            <div className='w-[100px] '>
+                            <div className='w-[100px] flex items-center '>
                                 <Button 
                                     text='Edit'
                                     className='bg-dark-100'
                                     onClick={() => setShowEditUserPopup(item)}
                                 />
+                            </div>
+                            <div className='w-[50px] flex items-center justify-center'>
+                                <button onClick={() => setShowDeleteUserPopup(item.id)} className='p-2 rounded-md bg-dark-100 hover:cursor-pointer'>
+                                    <FaTrash className='bg-red-600' />
+                                </button>
                             </div>
                         </div>
                     ))}

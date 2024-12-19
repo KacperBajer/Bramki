@@ -1,6 +1,7 @@
 'use client'
 import Button from '@/components/Button'
 import CreateUserPopup from '@/components/CreateUserPopup'
+import DeleteUserPopup from '@/components/DeleteUserPopup'
 import UsersTable from '@/components/UsersTable'
 import { User } from '@/lib/types'
 import { getUsers } from '@/lib/users'
