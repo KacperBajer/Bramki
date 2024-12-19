@@ -12,10 +12,11 @@ const page = () => {
     const [logs, setLogs] = useState<Logs[] | null>(null)
     const [totalRows, setTotalRows] = useState(0)
     const [page, setPage] = useState(1)
+    const [id, setId] = useState('')
 
     useEffect(() => {
         const fetchLogs = async () => {
-            const res = await getLogs(page)
+            const res = await getLogs(page, parseInt(id))
             console.log(res)
             if(res.status == 'failed') {
                 toast.error(res.error || 'Something went wrong')      
@@ -42,8 +43,17 @@ const page = () => {
 
   return (
     <div className='w-full min-h-[calc(100vh-32px)] border-2 border-dark-100 rounded-md py-6 px-4 overflow-x-hidden'>
-        <div className='mb-8'>
+        <div className='mb-8 flex justify-between items-center'>
             <p className='ml-1 text-2xl font-bold'>Logs</p>
+            <div className='max-w-[200px]'>
+                <input 
+                    placeholder='User ID'
+                    className='w-full py-2 px-4 border-2 border-dark-100 rounded-md outline-none bg-transparent text-sm appearance-none'
+                    onChange={(e) => setId(e.target.value)}
+                    value={id}
+                    name='id'
+                />
+            </div>
         </div>
         <LogsTable data={logs} />
         <div className='mt-5 flex justify-between items-start mx-4'>
