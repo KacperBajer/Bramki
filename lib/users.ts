@@ -361,27 +361,38 @@ type EditUserResponse = {
   status: "success" | "failed";
   error?: string;
 };
-
 export const editUser = async (
   id: number,
-  email: string,
+  email: string | undefined,
   firstname: string,
   lastname: string,
   userclass?: string,
   role: string = "User"
 ) => {
   try {
-    const query = `
+    let query = `
         UPDATE users
-        SET email = $1,
-            firstname = $2,
-            lastname = $3,
-            role = $4,
-            class = $5
-        WHERE id = $6;
+        SET firstname = $1,
+            lastname = $2,
+            role = $3,
+            class = $4
+        WHERE id = $5;
     `;
 
-    const values = [email, firstname, lastname, role, userclass || null, id];
+    let values = [firstname, lastname, role, userclass || null, id];
+
+    if (email) {
+      query = `
+          UPDATE users
+          SET email = $1,
+              firstname = $2,
+              lastname = $3,
+              role = $4,
+              class = $5
+          WHERE id = $6;
+      `;
+      values = [email, firstname, lastname, role, userclass || null, id];
+    }
 
     const result = await (conn as Pool).query(query, values);
 
@@ -392,7 +403,7 @@ export const editUser = async (
     console.log(error);
     return {
       status: "failed",
-      error: "Something wants wrong",
+      error: "Something went wrong",
     } as EditUserResponse;
   }
 };
