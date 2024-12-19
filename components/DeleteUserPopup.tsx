@@ -13,14 +13,14 @@ const DeleteUserPopup = ({ setShowPopup, id }: Props) => {
             <div className='px-10 py-6 bg-black relative border-2 border-dark-100 rounded-lg w-[400px]'>
                 <p className='text-2xl font-bold text-center mb-3'>Delete user</p>
                 <p className='text-gray-400 text-sm text-center'>Are you sure, you want to delete user with ID: {id}?</p>
-                <div className='flex gap-2 mt-5'>
+                <div className='flex gap-3 mt-5'>
                     <Button 
                         text='Confirm'
-                        className='bg-green-600'
+                        className='bg-green-700 hover:bg-green-800'
                     />
                     <Button 
                         text='Cancel'
-                        className='bg-red-600'
+                        className='bg-red-700 hover:bg-red-800'
                         onClick={() => setShowPopup(false)}
                     />
                 </div>
