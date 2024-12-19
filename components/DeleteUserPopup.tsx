@@ -1,5 +1,6 @@
 import React from 'react'
 import { IoMdClose } from 'react-icons/io'
+import Button from './Button'
 
 type Props = {
     setShowPopup: (e: boolean) => void
@@ -10,9 +11,19 @@ const DeleteUserPopup = ({ setShowPopup, id }: Props) => {
     return (
         <div className='w-full bg-black/50 z-10 h-screen fixed top-0 left-0 flex justify-center items-center'>
             <div className='px-10 py-6 bg-black relative border-2 border-dark-100 rounded-lg w-[400px]'>
-                <IoMdClose className='absolute top-5 right-5 hover:cursor-pointer text-xl' onClick={() => setShowPopup(false)} />
-                <p className='text-2xl font-bold text-center mb-8'>Delete user</p>
-                <p>Are you sure, you want to delete user with ID: {id}?</p>
+                <p className='text-2xl font-bold text-center mb-3'>Delete user</p>
+                <p className='text-gray-400 text-sm text-center'>Are you sure, you want to delete user with ID: {id}?</p>
+                <div className='flex gap-2 mt-5'>
+                    <Button 
+                        text='Confirm'
+                        className='bg-green-600'
+                    />
+                    <Button 
+                        text='Cancel'
+                        className='bg-red-600'
+                        onClick={() => setShowPopup(false)}
+                    />
+                </div>
             </div>
         </div>
     )
