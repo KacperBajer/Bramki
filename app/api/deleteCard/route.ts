@@ -22,7 +22,7 @@ export async function DELETE(req: NextRequest) {
           console.log(id)
           console.log(user.cards.some((card) => card.id == parseInt(id)))
 
-          if(user.cards.some((card) => card.id == parseInt(id))) {
+          if(user.cards.some((card) => card.id !== parseInt(id))) {
             return  NextResponse.json({message: 'the card doesnt belong to you'}, {status: 500})            
           }
 
