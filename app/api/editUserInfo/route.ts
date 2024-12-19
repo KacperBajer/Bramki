@@ -21,15 +21,9 @@ export async function PATCH(req: NextRequest) {
       return  NextResponse.json({message: 'Session expired'}, {status: 401})            
     }
 
-    if(user.id !== parseInt(id as string)) {
-      console.log('d')
-      return  NextResponse.json({message: 'Something went wrong!'}, {status: 500})            
-    }
-
     const edit = await editUser(parseInt(id as string), undefined, firstname, lastname, userClass)
 
     if(edit.status === 'failed') {
-      console.log('f')
       return NextResponse.json(
         { message: edit.error || "Something went wrong" },
         { status: 500 }
