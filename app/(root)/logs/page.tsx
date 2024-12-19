@@ -5,6 +5,7 @@ import { Logs } from '@/lib/types'
 import React, { useEffect, useState } from 'react'
 import { IoIosArrowBack } from "react-icons/io";
 import { OrbitProgress } from 'react-loading-indicators'
+import { toast } from 'react-toastify'
 
 const page = () => {
 
@@ -17,6 +18,7 @@ const page = () => {
             const res = await getLogs(page)
             console.log(res)
             if(res.status == 'failed') {
+                toast.error(res.error || 'Something went wrong')      
                 return
             }
             setLogs(res.data as Logs[])
