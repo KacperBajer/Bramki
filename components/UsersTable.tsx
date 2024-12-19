@@ -74,7 +74,7 @@ const UsersTable = ({ data, fetchUsers }: Props) => {
                             </div>
                             <div className='w-[50px] flex items-center justify-center'>
                                 <button onClick={() => setShowDeleteUserPopup(item.id)} className='p-2 rounded-md bg-dark-100 hover:cursor-pointer'>
-                                    <FaTrash className='bg-red-600' />
+                                    <FaTrash className='text-red-600' />
                                 </button>
                             </div>
                         </div>
