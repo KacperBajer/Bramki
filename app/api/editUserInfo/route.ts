@@ -21,7 +21,7 @@ export async function PATCH(req: NextRequest) {
       return  NextResponse.json({message: 'Session expired'}, {status: 401})            
     }
 
-    console.log(user.id, id)
+    console.log(user.id === parseInt(id))
 
     if(user.id !== parseInt(id as string)) {
       console.log('d')
