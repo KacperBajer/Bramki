@@ -54,7 +54,7 @@ const CardInfoPopup = ({card, setShowPopup}: Props) => {
     <div className='w-full bg-black/50 z-10 h-screen fixed top-0 left-0 flex justify-center items-center'>
         <div ref={ref} className='px-10 py-6 bg-black border-2 border-dark-100 rounded-lg '>
             <p className='text-center text-2xl font-bold mb-4'>Card Info</p>
-            <div className='flex gap-4 items-center'>
+            <div className='flex gap-3 items-center'>
               <p className='text-base'>ID: {card.id} ({card.type})</p>
               <button disabled={isLoading} onClick={handleDelete} className='p-2 rounded-md bg-dark-100 hover:cursor-pointer'>
                 <FaTrash className='text-red-600' />
