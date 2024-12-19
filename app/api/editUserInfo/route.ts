@@ -8,11 +8,11 @@ export async function PATCH(req: NextRequest) {
   const token = headers.get('token')
   const { firstname, lastname, userClass } = body;
 
-  console.log(firstname, lastname, userClass, id);
+  console.log(firstname, lastname, userClass, id, token);
   try {
 
-    if (!token) {
-      return  NextResponse.json({message: 'Token, user id, first and last name are required'}, {status: 400})
+    if (!token || !firstname || !lastname || !id) {
+      return  NextResponse.json({message: 'First and last name are required'}, {status: 400})
     }
 
     const user = await getUser(token)
