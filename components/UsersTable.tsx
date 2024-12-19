@@ -23,7 +23,7 @@ const UsersTable = ({ data, fetchUsers }: Props) => {
 
     useEffect(() => {
         fetchUsers()
-    }, [showEditUserPopup, showAddCardPopup])
+    }, [showEditUserPopup, showAddCardPopup, showDeleteUserPopup])
 
     return (
         <>
