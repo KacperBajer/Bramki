@@ -31,7 +31,7 @@ const SideBar = ({user}: Props) => {
                     <Link
                         key={index}
                         href={item.href}
-                        className={`w-full hover:bg-dark-100/60 px-4 py-2 rounded-md flex items-center gap-4 ${path === item.href || (item.href !== '/' && path.startsWith(item.href)) ? 'bg-dark-100/60' : ''}`}
+                        className={`w-full hover:bg-dark-100/60 px-4 py-2 rounded-md flex items-center gap-4 ${path === item.href && 'bg-dark-100/60'}`}
                     >
                         {item.icon}
                         <p>{item.name}</p>

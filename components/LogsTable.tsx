@@ -26,7 +26,7 @@ const LogsTable = ({ data }: Props) => {
                                 <p>{item.id}</p>
                             </div>
                             <div className='text-left w-[250px]'>
-                                <p>{item.firstname} {item.lastname} (<Link className='text-blue-600 hover:cursor-pointer' href={`/logs/user/${item.userid}`}>{item.userid}</Link>)</p>
+                                <p>{item.firstname} {item.lastname} ({item.userid})</p>
                             </div>
                             <div className='text-left w-[300px]'>
                                 <p>{item.action}</p>
