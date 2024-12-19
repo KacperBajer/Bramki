@@ -219,6 +219,31 @@ export const createUser = async (
   }
 };
 
+type DeleteUserResponse = {
+  status: "success" | "failed";
+  error?: string;
+};
+
+export const deleteUser = async (id: number) => {
+  try {
+    const query = `
+        DELETE FROM users
+        WHERE id = $1;
+    `;
+
+    const result = await (conn as Pool).query(query, [id]);
+
+    return {
+      status: "success",
+    } as DeleteUserResponse;
+  } catch (error) {
+    return {
+      status: "failed",
+      error: "Something went wrong",
+    } as DeleteUserResponse;
+  }
+};
+
 type CreateUserRequestResponse = {
     status: 'success' | 'failed'
     error?: string
