@@ -2,8 +2,7 @@
 
 import { Pool } from "pg";
 import conn from "./db";
-import { Controller, User } from "./types";
-import { getUserId } from "./sessions";
+import { Controller } from "./types";
 import { getUser } from "./users";
 import { createLogs } from "./logs";
 import { createKommerSession } from "./kommer";

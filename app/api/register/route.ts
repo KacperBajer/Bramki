@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
     const body = await req.json(); 
-    const { email, password, firstname, lastname, userclass } = body;
+    const { email, password, firstname, lastname, userClass } = body;
 
     console.log(email, password,  firstname, lastname)
     try {
@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
           return NextResponse.json({message: 'Email is used'}, {status: 500})
         }
 
-        const createacc = await createUserRequest(email, password, firstname, lastname, userclass)
+        const createacc = await createUserRequest(email, password, firstname, lastname, userClass)
         if(createacc.status === 'failed') {
           return  NextResponse.json({message: createacc.error || 'Something went wrong'}, {status: 500})
         }

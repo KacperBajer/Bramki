@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
     const password = headers.get('password')
     const firstname = headers.get('firstname')
     const lastname = headers.get('lastname')
-    const userClass = headers.get('userClass')   
+    const userClass = headers.get('class')   
 
 
     const { code } = body;
