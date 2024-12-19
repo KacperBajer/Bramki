@@ -13,14 +13,33 @@ type GetLogsResponse = {
     totalRows?: number 
 }
 
-export const getLogs = async (page: number) => {
-    
+export const getLogs = async (page: number, userid?: number) => {
     try {
         const itemsPerPage = 50;
         const offset = (page - 1) * itemsPerPage;
 
-        const totalCountQuery = 'SELECT COUNT(*) AS total FROM logs';
-        const totalCountResult = await (conn as Pool).query(totalCountQuery);
+        let totalCountQuery = 'SELECT COUNT(*) AS total FROM logs';
+        let logsQuery = `
+            SELECT 
+                l.*, 
+                u.firstname, 
+                u.lastname 
+            FROM logs l
+            LEFT JOIN users u ON l.userid = u.id
+        `;
+
+        const queryParams: any[] = [];
+
+        if (userid) {
+            totalCountQuery += ' WHERE l.userid = $1';
+            logsQuery += ' WHERE l.userid = $1';
+            queryParams.push(userid);
+        }
+
+        logsQuery += ` ORDER BY l.date DESC LIMIT $${queryParams.length + 1} OFFSET $${queryParams.length + 2}`;
+        queryParams.push(itemsPerPage, offset);
+
+        const totalCountResult = await (conn as Pool).query(totalCountQuery, userid ? [userid] : []);
 
         if (totalCountResult.rows.length < 1 || !totalCountResult.rows[0].total) {
             return {
@@ -31,17 +50,7 @@ export const getLogs = async (page: number) => {
 
         const totalRows = parseInt(totalCountResult.rows[0].total, 10);
 
-        const logsQuery = `
-            SELECT 
-                l.*, 
-                u.firstname, 
-                u.lastname 
-            FROM logs l
-            LEFT JOIN users u ON l.userid = u.id
-            ORDER BY l.date DESC 
-            LIMIT $1 OFFSET $2
-        `;
-        const logsResult = await (conn as Pool).query(logsQuery, [itemsPerPage, offset]);
+        const logsResult = await (conn as Pool).query(logsQuery, queryParams);
 
         return {
             status: 'success',
@@ -55,7 +64,8 @@ export const getLogs = async (page: number) => {
             error: 'Something went wrong',
         } as GetLogsResponse;
     }
-}
+};
+
 
 export const createLogs = async (action: string, status: 'success' | 'failed', comment: string, token?: string) => {
     try {
