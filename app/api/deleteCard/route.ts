@@ -18,6 +18,8 @@ export async function DELETE(req: NextRequest) {
             return  NextResponse.json({message: 'Session expired'}, {status: 401})            
           }
 
+          console.log(id)
+          
           if(user.cards.some((card) => card.id === parseInt(id))) {
             return  NextResponse.json({message: 'the card doesnt belong to you'}, {status: 500})            
           }
